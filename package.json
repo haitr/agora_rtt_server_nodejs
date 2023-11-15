@@ -1,0 +1,12 @@
+{
+  "name": "agora_rtt_server_nodejs",
+  "version": "0.0.1",
+  "description": "Agora RTT business server demo",
+  "main": "index.js",
+  "repository": "https://github.com/haitr/agora_rtt_server_nodejs.git",
+  "author": "haitr",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
