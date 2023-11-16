@@ -33,19 +33,19 @@ const language = "ko-KR"; // Max 2 simultaneous languages are supported, separat
 
 async function agoraRequestBuildToken() {
     const url = `${rttUrl}/builderTokens`;
-    const data = { 'instanceId': instanceId };
-    const apiResponse = await axios.post(url, data, { headers });
-    if (apiResponse.hasOwnProperty('tokenName')) {
-        const tokenName = apiResponse['tokenName'];
+    const postBody = { 'instanceId': instanceId };
+    const apiResponse = await axios.post(url, postBody, { headers: headers });
+    const data = apiResponse.data;
+    if (data.hasOwnProperty('tokenName')) {
+        const tokenName = data['tokenName'];
         process.env['AGORA_BUILDER_TOKEN'] = tokenName;
     }
+    console.log(`BuildToken: ${process.env.AGORA_BUILDER_TOKEN}`);
 }
 
 async function agoraRttStart(channelName) {
-    const url = `${rttUrl}/tasks
-        ?builderToken=${process.env.AGORA_BUILDER_TOKEN}`;
     const tokenAudio = buildToken(channelName, uidAudio);
-    const tokenVideo = buildToken(channelName, uidText);
+    const tokenText = buildToken(channelName, uidText);
     //
     const storageConfig = {
         'accessKey': ossAccessKey, // Access key of oss
@@ -59,7 +59,7 @@ async function agoraRttStart(channelName) {
         ]
     }
     //
-    const data = {
+    const postData = {
         'audio': {
             'subscribeSource': 'AGORARTC', // Currently fixed
             'agoraRtcConfig': {
@@ -89,12 +89,12 @@ async function agoraRttStart(channelName) {
                 'output': {
                     'destinations': [
                         'AgoraRTCDataStream',
-                        'Storage'
+                        // 'Storage'
                     ],
                     'agoraRTCDataStream': {
                         'channelName': channelName,
                         'uid': uidText,
-                        'token': tokenVideo
+                        'token': tokenText
                     },
                     // 'cloudStorage': {
                     //     'format': 'HLS', // Currently fixed
@@ -106,7 +106,11 @@ async function agoraRttStart(channelName) {
     };
     //
     try {
-        const apiResponse = await axios.post(url, data, { headers });
+        const url = `${rttUrl}/tasks?builderToken=${process.env.AGORA_BUILDER_TOKEN}`;
+        console.log(postData);
+        console.log(postData.audio.agoraRtcConfig.subscribeConfig);
+        console.log(postData.config.recognizeConfig.output);
+        const apiResponse = await axios.post(url, postData, { headers: headers });
         const status = apiResponse.data.status;
         const taskId = apiResponse.data.taskId;
         if (status == 'IN_PROGRESS' || status == 'STARTED') {
