@@ -33,9 +33,7 @@ const language = "ko-KR"; // Max 2 simultaneous languages are supported, separat
 
 async function agoraRequestBuildToken() {
     const url = `${rttUrl}/builderTokens`;
-    const data = {
-        'instanceId': instanceId
-    };
+    const data = { 'instanceId': instanceId };
     const apiResponse = await axios.post(url, data, { headers });
     if (apiResponse.hasOwnProperty('tokenName')) {
         const tokenName = apiResponse['tokenName'];
@@ -113,6 +111,7 @@ async function agoraRttStart(channelName) {
         const taskId = apiResponse.data.taskId;
         if (status == 'IN_PROGRESS' || status == 'STARTED') {
             console.log(`RTT task started for channel ${channelName} ID: ${taskId}`);
+            return taskId;
         } else {
             console.log(`RTT task status: ${status}`);
         }
@@ -128,13 +127,16 @@ async function agoraRttStop(taskId) {
         const apiResponse = await axios.delete(url, { headers });
         if (isSuccessful(apiResponse.status)) {
             console.log(`RTT stopped task: ${taskId}`);
+            return true;
         } else {
             console.log(`RTT failed to stop task: ${taskId}`);
+            return false;
         }
     } catch (error) {
         console.log('Exception stopping RTT task: ' + taskId);
         console.log(error);
         console.log('-----');
+        return false;
     }
 }
 
@@ -146,13 +148,16 @@ async function agoraRttQuery(taskId) {
         const status = apiResponse.data.status;
         if (isSuccessful(apiResponse.status)) {
             console.log(`RTT query task: ${taskId} status: ${status}`);
+            return true;
         } else {
             console.log(`RTT failed to query task: ${taskId} status: ${status}`);
+            return false;
         }
     } catch (error) {
         console.log('Exception querying RTT task: ' + taskId);
         console.log(error);
         console.log('-----');
+        return false;
     }
 }
 

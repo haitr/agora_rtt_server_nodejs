@@ -13,15 +13,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/rttStart', async (req, res) => {
-    await agoraRttStart();
+    const taskId = await agoraRttStart();
+    res.send({ 'id': taskId });
 });
 
 app.get('/rttQuery', async (req, res) => {
-    await agoraRttQuery();
+    const result = await agoraRttQuery();
+    res.send({ result });
 });
 
 app.get('/rttStop', async (req, res) => {
-    await agoraRttStop();
+    const result = await agoraRttStop();
+    res.send({ result });
 });
 
 // Start server
