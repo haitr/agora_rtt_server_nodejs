@@ -28,7 +28,7 @@ const uidAudio = 111;
 const uidText = 222;
 const tokenExpirationInSecond = 3600;
 const privilegeExpirationInSecond = 3600;
-const maxIdleTime = 120; // If there is no activity of this time, the task stops automatically.
+const maxIdleTime = 60; // If there is no activity of this time, the task stops automatically.
 const language = "ko-KR"; // Max 2 simultaneous languages are supported, separated by a comma.
 
 async function agoraRequestBuildToken() {
@@ -66,7 +66,7 @@ async function agoraRttStart(channelName) {
                 'channelName': channelName, // Name of the channel for RTT
                 // Uid used by the audio streaming bot. Must be an
                 // integer specified as a string. For example "111"
-                'uid': uidAudio,
+                'uid': `${uidAudio}`,
                 'token': tokenAudio, // RTC token for the audio uid
                 'channelType': 'LIVE_TYPE', // Currently fixed,
                 'subscribeConfig': {
@@ -93,7 +93,7 @@ async function agoraRttStart(channelName) {
                     ],
                     'agoraRTCDataStream': {
                         'channelName': channelName,
-                        'uid': uidText,
+                        'uid': `${uidText}`,
                         'token': tokenText
                     },
                     // 'cloudStorage': {
@@ -107,9 +107,6 @@ async function agoraRttStart(channelName) {
     //
     try {
         const url = `${rttUrl}/tasks?builderToken=${process.env.AGORA_BUILDER_TOKEN}`;
-        console.log(postData);
-        console.log(postData.audio.agoraRtcConfig.subscribeConfig);
-        console.log(postData.config.recognizeConfig.output);
         const apiResponse = await axios.post(url, postData, { headers: headers });
         const status = apiResponse.data.status;
         const taskId = apiResponse.data.taskId;
@@ -121,6 +118,20 @@ async function agoraRttStart(channelName) {
         }
     } catch (error) {
         console.log('Exception starting speech-to-text task: ' + error);
+        if (error.response) {
+            // The request was made, but the server responded with a status code
+            // other than 2xx (e.g., 404, 500).
+            // console.error('Response data:', error.response.data);
+            // console.error('Response status:', error.response.status);
+            // console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            // The request was made but no response was received.
+            console.error('No response received:', error.request);
+        } else {
+            // Something happened in setting up the request that triggered an Error.
+            console.error('Error during request setup:', error.message);
+        }
+        console.error('Error config:', error.config);
     }
 }
 
