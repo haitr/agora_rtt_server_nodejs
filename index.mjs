@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { agoraRequestBuildToken, agoraRttQuery, agoraRttStart, agoraRttStop } from './agora_api_request.mjs';
+import { agoraRttQuery, agoraRttStart, agoraRttStop } from './agora_api_request.mjs';
 
 const app = express();
 const port = 3000;
@@ -30,6 +30,5 @@ app.get('/rttStop', async (req, res) => {
 
 // Start server
 app.listen(port, async () => {
-    await agoraRequestBuildToken();
     console.log('Listening port 3000...');
 });

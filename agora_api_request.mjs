@@ -44,6 +44,9 @@ async function agoraRequestBuildToken() {
 }
 
 async function agoraRttStart(channelName) {
+    // request buildToken first
+    await agoraRequestBuildToken();
+    //
     const tokenAudio = buildToken(channelName, uidAudio);
     const tokenText = buildToken(channelName, uidText);
     //
