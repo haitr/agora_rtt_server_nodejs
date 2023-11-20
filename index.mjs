@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
     res.send('<html><h2>Welcome to Agora RTT server.</h2></html>');
 });
 
-app.get('/rttStart/:channel', async (req, res) => {
+app.get('/rttStart/:channel/:uid', async (req, res) => {
     const channelName = req.params.channel;
     const taskId = await agoraRttStart(channelName);
     res.send({ 'id': taskId });
